@@ -83,6 +83,7 @@ class Database:
             """
             SELECT id, captured_at, created_at, image_path, is_box, above_pallet_thresh, prediction_confidence_score, status
             FROM video_frames
+            WHERE status IN ('finished', 'errored')
             ORDER BY captured_at DESC
             LIMIT 5
             """
