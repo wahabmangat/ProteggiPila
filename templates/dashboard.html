@@ -3,21 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel</title>
+    <title>ProteggiPila Dashboard</title>
     <script defer src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 p-6">
     <div class="container mx-auto">
-        <h2 class="text-2xl font-bold">Admin Panel - Add Users</h2>
-        <form action="/admin" method="POST" class="mt-4">
-            <input type="text" name="username" placeholder="Username" required class="w-full p-2 border rounded mt-2">
-            <input type="password" name="password" placeholder="Password" required class="w-full p-2 border rounded mt-2">
-            <select name="role" class="w-full p-2 border rounded mt-2">
-                <option value="user">User</option>
-                <option value="admin">Admin</option>
-            </select>
-            <button type="submit" class="w-full bg-green-600 text-white p-2 rounded mt-4">Add User</button>
-        </form>
+        <!-- Navigation Bar -->
+        <nav class="bg-blue-500 text-white p-4 rounded-md flex justify-between">
+            <span class="text-lg font-bold">ProteggiPila</span>
+            <div>
+                <a href="/logout" class="bg-red-500 px-4 py-2 rounded">Logout</a>
+            </div>
+        </nav>
+        
+        <!-- Main Content -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            <!-- Video Stream Section -->
+            <div class="bg-white p-6 shadow-md rounded-md">
+                <h2 class="text-xl font-semibold mb-2">Live Video Streams</h2>
+                <select id="videoSource" class="w-full p-2 border border-gray-300 rounded" onchange="changeSource()">
+                    <option value="camera1">Camera 1</option>
+                    <option value="camera2">Camera 2</option>
+                    <option value="cctv_stream">CCTV Live</option>
+                </select>
+                <div class="mt-4 border border-gray-300 rounded-md overflow-hidden">
+                    <img id="videoStream" src="/video_feed/camera1" class="w-full h-[500px] bg-black" />
+                </div>
+            </div>
+            
+            <!-- Output Table Section -->
+            <div class="bg-white p-6 shadow-md rounded-md">
+                <h2 class="text-xl font-semibold mb-2">Prediction Output</h2>
+                <table class="w-full border-collapse border border-gray-300 mt-2">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="border border-gray-300 p-2">Timestamp</th>
+                            <th class="border border-gray-300 p-2">Prediction</th>
+                            <th class="border border-gray-300 p-2">Confidence</th>
+                        </tr>
+                    </thead>
+                    <tbody id="outputTable">
+                        <!-- Data Rows will be added dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Alert System -->
+        <div id="alertBox" class="bg-red-500 text-white p-4 mt-4 rounded-md hidden text-center">
+            <strong>⚠ Alert:</strong> Critical scenario detected!
+        </div>
     </div>
+
+    <script>
+        function changeSource() {
+            const selectedCamera = document.getElementById("videoSource").value;
+            document.getElementById("videoStream").src = `/video_feed/${selectedCamera}`;
+        }
+
+        function addPrediction() {
+            const timestamp = new Date().toLocaleTimeString();
+            const prediction = "Threat Detected";
+            const confidence = "92%";
+            
+            const table = document.getElementById("outputTable");
+            const newRow = `<tr>
+                <td class='border border-gray-300 p-2'>${timestamp}</td>
+                <td class='border border-gray-300 p-2'>${prediction}</td>
+                <td class='border border-gray-300 p-2'>${confidence}</td>
+            </tr>`;
+            table.innerHTML += newRow;
+            
+            // Show the alert box
+            const alertBox = document.getElementById("alertBox");
+            alertBox.classList.remove("hidden");
+
+            // Hide the alert after 10 seconds
+            setTimeout(() => {
+                alertBox.classList.add("hidden");
+            }, 10000);
+        }
+
+        // Simulate incoming predictions every 30 seconds
+        setInterval(addPrediction, 30000);
+    </script>
 </body>
 </html>
