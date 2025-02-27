@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Stream & Output Table</title>
+    <script defer src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-6">
+    <div class="container mx-auto">
+        <!-- Navigation Bar -->
+        <nav class="bg-blue-500 text-white p-4 rounded-md flex justify-between">
+            <span class="text-lg font-bold">ProteggiPila</span>
+            <span>User: Admin</span>
+        </nav>
+        
+        <!-- Main Content -->
+        <div class="grid grid-cols-2 gap-4 mt-6">
+            <!-- Video Stream Section -->
+            <div class="bg-white p-4 shadow-md rounded-md">
+                <h2 class="text-xl font-semibold">Live Video Streams</h2>
+                <select id="videoSource" class="w-full p-2 border border-gray-300 rounded" onchange="changeSource()">
+                    <option value="camera1.mp4">Camera 1</option>
+                    <option value="camera2.mp4">Camera 2</option>
+                    <option value="cctv_stream">CCTV Live</option>
+                </select>
+                <video id="videoStream" class="w-full h-64 bg-black mt-4" autoplay></video>
+            </div>
+            
+            <!-- Output Table Section -->
+            <div class="bg-white p-4 shadow-md rounded-md">
+                <h2 class="text-xl font-semibold">Prediction Output</h2>
+                <table class="w-full border-collapse border border-gray-300 mt-2">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="border border-gray-300 p-2">Timestamp</th>
+                            <th class="border border-gray-300 p-2">Prediction</th>
+                            <th class="border border-gray-300 p-2">Confidence</th>
+                        </tr>
+                    </thead>
+                    <tbody id="outputTable">
+                        <!-- Data Rows will be added dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Alert System -->
+        <div class="bg-red-500 text-white p-4 mt-4 rounded-md hidden" id="alertBox">
+            <strong>Alert:</strong> Critical scenario detected!
+        </div>
+    </div>
+
+    <script>
+        function changeSource() {
+            const video = document.getElementById("videoStream");
+            const source = document.getElementById("videoSource").value;
+            video.src = source;
+            video.load();
+            video.play();
+        }
+
+        setInterval(() => {
+            const timestamp = new Date().toLocaleTimeString();
+            const prediction = "Threat Detected";
+            const confidence = "92%";
+            
+            const table = document.getElementById("outputTable");
+            const newRow = `<tr>
+                <td class='border border-gray-300 p-2'>${timestamp}</td>
+                <td class='border border-gray-300 p-2'>${prediction}</td>
+                <td class='border border-gray-300 p-2'>${confidence}</td>
+            </tr>`;
+            table.innerHTML += newRow;
+            
+            document.getElementById("alertBox").classList.remove("hidden");
+        }, 20000);
+    </script>
+</body>
+</html>
